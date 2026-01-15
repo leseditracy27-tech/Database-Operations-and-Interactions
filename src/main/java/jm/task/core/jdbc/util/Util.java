@@ -1,21 +1,58 @@
 package jm.task.core.jdbc.util;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import jm.task.core.jdbc.model.User;
+import org.hibernate.SessionFactory;
 
-public class Util {
-    private static final String URL = "jdbc:mysql://localhost:3306/testdb?useS=false";
-    private static final String USER = "root";
-    private static final String PASSWORD = "LeeTracy@271020";
+import org.hibernate.boot.MetadataSources;
 
-    public static Connection getConnection() {
-        Connection connection = null;
-        try {
-            connection = DriverManager.getConnection(URL, USER, PASSWORD);
-        } catch (SQLException e) {
-            e.printStackTrace();
+import org.hibernate.boot.registry.StandardServiceRegistry;
+
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+
+public class Util  {
+    private static SessionFactory sessionFactory;
+
+
+
+    public static SessionFactory getSessionFactory() {
+
+        if (sessionFactory == null) {
+
+            StandardServiceRegistry registry = new StandardServiceRegistryBuilder()
+
+                    .applySetting("hibernate.connection.driver_class", "com.mysql.cj.jdbc.Driver")
+
+                    .applySetting("hibernate.connection.url", "jdbc:mysql://localhost:3306/testdb")
+
+                    .applySetting("hibernate.connection.username", "root")
+
+                    .applySetting("hibernate.connection.password", "LeeTracy@271020")
+
+                    .applySetting("hibernate.dialect", "org.hibernate.dialect.MySQLDialect")
+
+                    .applySetting("hibernate.hbm2ddl.auto", "none")
+
+                    .applySetting("hibernate.show_sql", "true")
+
+                    .applySetting("hibernate.format_sql", "true")
+
+                    .build();
+
+
+
+            sessionFactory = new MetadataSources(registry)
+
+                    .addAnnotatedClass(User.class)
+
+                    .buildMetadata()
+
+                    .buildSessionFactory();
+
         }
-        return connection;
-    }   // set up a database connection
+
+        return sessionFactory;
+
+    }
+
 }
+
